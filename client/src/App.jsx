@@ -1,8 +1,17 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Interview from './pages/Interview'
+import Report from './pages/Report'
+
 function App() {
   return (
-    <div className="bg-blue-500 text-white text-3xl p-10">
-      Tailwind Working!
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/interview" element={<Interview />} />
+        <Route path="/report" element={<Report />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
