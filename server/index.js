@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import interviewRoutes from './routes/interview.js'
 import authRoutes from './routes/authRoutes.js'
+import dashboardRoutes from './routes/dashboardRoutes.js'
 
 dotenv.config()
 
@@ -18,6 +19,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/interview
 
 app.use('/api/auth', authRoutes)
 app.use('/api/interview', interviewRoutes)
+app.use('/api/dashboard', dashboardRoutes)
 
 app.get('/', (req, res) => {
   res.send('Server is running!')

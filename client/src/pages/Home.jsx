@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useEffect, useRef } from "react"
+import { useNavigate, Link } from "react-router-dom"
 
 const roles = [
   "Frontend Developer",
@@ -18,27 +18,30 @@ const levels = ["Beginner", "Intermediate", "Advanced"]
 
 function Home() {
   const navigate = useNavigate()
+  const historyRef = useRef(null)
   const [user, setUser] = useState(null)
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
-  
-  // Selection States for new interview
-  const [selectedRole, setSelectedRole] = useState('')
-  const [selectedLevel, setSelectedLevel] = useState('')
+  const [fetchError, setFetchError] = useState("")
 
   useEffect(() => {
-    // 1. Check logged in session credentials
-    const loggedInUser = localStorage.getItem('user')
+    const loggedInUser = localStorage.getItem("user")
     if (!loggedInUser) {
-      navigate('/login')
-      return;
+      navigate("/login")
+      return
     }
     const parsedUser = JSON.parse(loggedInUser)
     setUser(parsedUser)
 
-    // 2. Fetch specific user distinct logs matrix
     fetch(`http://localhost:5000/api/dashboard/user-history/${parsedUser.id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((data) => {
+            throw new Error(data.error || "Unable to fetch history.")
+          })
+        }
+        return res.json()
+      })
       .then((data) => {
         if (Array.isArray(data)) {
           setHistory(data)
@@ -47,170 +50,679 @@ function Home() {
       })
       .catch((err) => {
         console.error("Dashboard metric cluster error:", err)
+        setFetchError(err.message || "Unable to load history.")
         setLoading(false)
       })
   }, [navigate])
 
   const handleStart = () => {
-    if (!selectedRole || !selectedLevel) {
-      alert('Please select both role and experience level!')
-      return
-    }
-    navigate('/interview', {
-      state: { role: selectedRole, level: selectedLevel }
-    })
+    navigate("/interview")
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    navigate('/login')
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    navigate("/login")
     window.location.reload()
+  }
+
+  const handleViewHistory = () => {
+    historyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f172a] text-blue-400 flex items-center justify-center font-mono tracking-widest animate-pulse">
-        SYNCING DASHBOARD METRICS...
+      <div style={styles.loadingContainer}>
+        <div style={styles.loadingContent}>
+          <div style={styles.loadingSpinner}></div>
+          <p style={styles.loadingText}>SYNCING DASHBOARD METRICS...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen w-screen bg-[#0f172a] text-white font-sans overflow-x-hidden">
-      
-      {/* Top Professional Portal Control Bar */}
-      <nav className="border-b border-slate-800 bg-[#1e293b]/50 backdrop-blur px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-          <div className="h-2.5 w-2.5 rounded-full bg-blue-500 animate-ping"></div>
-          <span className="font-mono text-xs tracking-widest text-slate-400">SECURE PROFILE PORTAL</span>
+    <div style={styles.container}>
+      {/* Animated Background */}
+      <div style={styles.bgAnimation}>
+        <div style={styles.bgOrb1}></div>
+        <div style={styles.bgOrb2}></div>
+        <div style={styles.bgOrb3}></div>
+        <div style={styles.bgGrid}></div>
+      </div>
+
+      {/* Navigation */}
+      <nav style={styles.nav}>
+        <div style={styles.navLeft}>
+          <div style={styles.navDots}>
+            <span style={{ ...styles.navDot, animationDelay: '0s' }}></span>
+            <span style={{ ...styles.navDot, animationDelay: '0.3s' }}></span>
+            <span style={{ ...styles.navDot, animationDelay: '0.6s' }}></span>
+          </div>
+          <span style={styles.navBrand}>SECURE PROFILE PORTAL</span>
         </div>
-        <button 
-          onClick={handleLogout} 
-          className="px-4 py-1.5 rounded-xl border border-red-500/30 text-red-400 text-xs font-mono tracking-wide hover:bg-red-500/10 transition-all"
-        >
+        <button onClick={handleLogout} style={styles.logoutBtn}>
           Disconnect Terminal (Logout)
         </button>
       </nav>
 
-      {/* Primary Dashboard Panel Workspace */}
-      <div className="max-w-6xl mx-auto p-4 sm:p-8 space-y-8">
-        
-        {/* User Identity Welcome Module Banner */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-[#1e293b] border border-slate-800/80 shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div>
-            <span className="text-xs font-mono text-blue-400 uppercase tracking-wider block">Authorized Operating Node</span>
-            <h1 className="text-3xl font-black tracking-tight text-white mt-1">{user?.name}</h1>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400 mt-2 font-mono">
-              <p>ID Account: <span className="text-slate-300">{user?.email}</span></p>
-              <p className="hidden sm:inline">|</p>
-              <p>Target Track: <span className="text-blue-400 font-sans">{user?.jobProfile || 'Not Configured'}</span></p>
+      {/* Main Content */}
+      <div style={styles.mainContent}>
+        {/* Profile Card */}
+        <div style={styles.profileCard}>
+          <div style={styles.profileHeader}>
+            <div style={styles.authBadge}>
+              <span style={styles.authIcon}>⚡</span>
+              <span style={styles.authText}>Authorized Operating Node</span>
+            </div>
+            <div style={styles.tierBadge}>
+              TIER: <span style={styles.tierValue}>PREMIUM</span>
             </div>
           </div>
           
-          <div className="text-xs font-mono bg-slate-900/60 p-3 rounded-xl border border-slate-800 h-fit shrink-0">
-            <span className="text-slate-500 block">ACCOUNT CAPABILITIES:</span>
-            <span className="text-emerald-400 font-bold">{user?.experience || 'Standard Track'}</span>
-          </div>
-        </div>
-
-        {/* Dashboard Dynamic Split Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <h1 style={styles.userName}>{user?.name}</h1>
           
-          {/* LEFT COLUMN: Launch New Session (Your selectors inside Dashboard) */}
-          <div className="bg-[#1e293b] border border-slate-800 rounded-2xl p-6 h-fit space-y-5 shadow-lg">
-            <div>
-              <h2 className="text-lg font-bold text-white">Initialize Simulation</h2>
-              <p className="text-xs text-slate-400 mt-1">Configure parameters to start target practice sessions.</p>
+          <div style={styles.userDetails}>
+            <div style={styles.detailItem}>
+              <span style={styles.detailLabel}>EMAIL</span>
+              <span style={styles.detailValue}>{user?.email}</span>
             </div>
-
-            {/* Role dropdown */}
-            <div>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">Select Target Job Role</label>
-              <select
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
-                className="w-full bg-slate-900 text-white rounded-xl border border-slate-800 px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-all cursor-pointer"
-              >
-                <option value="">-- Choose a Role --</option>
-                {roles.map((role) => (
-                  <option key={role} value={role}>{role}</option>
-                ))}
-              </select>
+            <div style={styles.detailDivider}></div>
+            <div style={styles.detailItem}>
+              <span style={styles.detailLabel}>PROFILE</span>
+              <span style={styles.detailValueHighlight}>{user?.jobProfile || "Not Set"}</span>
             </div>
+          </div>
 
-            {/* Level Selector buttons */}
-            <div>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">Select Experience Difficulty</label>
-              <div className="flex gap-2">
-                {levels.map((level) => (
-                  <button
-                    key={level}
-                    onClick={() => setSelectedLevel(level)}
-                    className={`flex-1 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-150
-                      ${selectedLevel === level
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/10'
-                        : 'bg-slate-900 text-slate-400 border border-slate-800 hover:bg-slate-800/50'
-                      }`}
-                  >
-                    {level}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Direct Trigger Execution Button */}
-            <button
-              onClick={handleStart}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/10 transition-all active:scale-[0.98]"
-            >
-              Start Interview Simulation 🚀
+          <div style={styles.buttonGroup}>
+            <button onClick={handleStart} style={styles.startBtn}>
+              <span style={styles.btnIcon}>🚀</span>
+              Start Interview Simulation
+              <span style={styles.btnArrow}>→</span>
+            </button>
+            <button onClick={handleViewHistory} style={styles.historyBtn}>
+              <span style={styles.btnIcon}>📋</span>
+              View History
             </button>
           </div>
-
-          {/* RIGHT COLUMN: Separate Complete Practices Log Session Tracking */}
-          <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-wider text-slate-400">Separate Session Logs & Evaluations</h3>
-            
-            {history.length === 0 ? (
-              <div className="p-12 text-center border-2 border-dashed border-slate-800/60 rounded-2xl text-slate-500 text-sm bg-slate-900/10">
-                No archived interface data assets. Run your first simulation parameter configuration node on the left panel to record telemetry.
-              </div>
-            ) : (
-              <div className="space-y-3.5">
-                {history.map((session) => (
-                  <div 
-                    key={session._id} 
-                    className="p-5 rounded-2xl bg-[#1e293b] border border-slate-800/80 hover:border-slate-700 transition-all duration-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-sm"
-                  >
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-mono text-slate-500 block">{new Date(session.createdAt).toLocaleDateString()} - SECURITY EVAL</span>
-                      <h4 className="text-base font-bold text-slate-100">{session.jobProfile} Session</h4>
-                      <p className="text-slate-400 text-xs line-clamp-1 pr-4">{session.feedback}</p>
-                    </div>
-                    
-                    <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end shrink-0 border-t border-slate-800 sm:border-0 pt-3 sm:pt-0">
-                      <div className="px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono font-black text-xs tracking-wider">
-                        SCORE: {session.score}%
-                      </div>
-                      <Link 
-                        to={`/report?id=${session._id}`} 
-                        className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-blue-400 hover:text-white font-semibold hover:bg-slate-800 transition-all"
-                      >
-                        View Report 📋
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
         </div>
 
+        {/* History Section */}
+        <div ref={historyRef} id="history-section" style={styles.historySection}>
+          <div style={styles.sectionHeader}>
+            <div style={styles.sectionLine}></div>
+            <h3 style={styles.sectionTitle}>PAST INTERVIEW SESSIONS</h3>
+            <div style={styles.sectionLine}></div>
+          </div>
+          
+          {fetchError && (
+            <div style={styles.errorBox}>
+              <span style={styles.errorIcon}>⚠️</span>
+              <span>Unable to load history: {fetchError}</span>
+            </div>
+          )}
+          
+          {history.length === 0 ? (
+            <div style={styles.emptyState}>
+              <div style={styles.emptyIcon}>📭</div>
+              <p style={styles.emptyText}>No past interview records.</p>
+              <p style={styles.emptySubtext}>Click "Start Interview Simulation" to begin your first session.</p>
+            </div>
+          ) : (
+            <div style={styles.historyList}>
+              {history.map((session, index) => (
+                <div 
+                  key={session._id} 
+                  style={{ ...styles.historyCard, animationDelay: `${index * 0.1}s` }}
+                  className="history-card"
+                >
+                  <div style={styles.cardLeft}>
+                    <div style={styles.cardDate}>
+                      <span style={styles.calendarIcon}>📅</span>
+                      {new Date(session.createdAt).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                    </div>
+                    <h4 style={styles.cardTitle}>
+                      {session.jobProfile}
+                      <span style={styles.cardLevel}>{session.level}</span>
+                    </h4>
+                    <p style={styles.cardFeedback}>{session.feedback}</p>
+                  </div>
+                  
+                  <div style={styles.cardRight}>
+                    <div style={styles.scoreBadge}>
+                      <svg style={styles.scoreIcon} viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+                      </svg>
+                      <span style={styles.scoreValue}>{session.score}%</span>
+                    </div>
+                    <Link 
+                      to={`/report?id=${session._id}`} 
+                      style={styles.viewReportBtn}
+                    >
+                      View Report
+                      <span style={styles.btnSmallArrow}>→</span>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 0.4;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.8;
+            transform: scale(1.05);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        .history-card {
+          animation: fadeInUp 0.5s ease-out forwards;
+          opacity: 0;
+        }
+
+        .history-card:hover {
+          transform: translateY(-2px);
+          transition: all 0.3s ease;
+        }
+
+        button, .history-card, .view-report-btn {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+      `}</style>
     </div>
   )
+}
+
+const styles = {
+  // Container Styles
+  container: {
+    minHeight: '100vh',
+    width: '100%',
+    background: '#0a0f1e',
+    color: '#e2e8f0',
+    fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+    position: 'relative',
+    overflowX: 'hidden',
+  },
+
+  // Animated Background
+  bgAnimation: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    pointerEvents: 'none',
+    zIndex: 0,
+  },
+  bgOrb1: {
+    position: 'absolute',
+    top: '-10%',
+    right: '-10%',
+    width: '500px',
+    height: '500px',
+    background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)',
+    borderRadius: '50%',
+    animation: 'pulse 8s ease-in-out infinite',
+  },
+  bgOrb2: {
+    position: 'absolute',
+    bottom: '-10%',
+    left: '-10%',
+    width: '600px',
+    height: '600px',
+    background: 'radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 70%)',
+    borderRadius: '50%',
+    animation: 'pulse 10s ease-in-out infinite reverse',
+  },
+  bgOrb3: {
+    position: 'absolute',
+    top: '40%',
+    left: '30%',
+    width: '400px',
+    height: '400px',
+    background: 'radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)',
+    borderRadius: '50%',
+    animation: 'pulse 12s ease-in-out infinite',
+  },
+  bgGrid: {
+    position: 'absolute',
+    inset: 0,
+    backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(59,130,246,0.05) 1px, transparent 1px)',
+    backgroundSize: '40px 40px',
+  },
+
+  // Loading Styles
+  loadingContainer: {
+    minHeight: '100vh',
+    background: '#0a0f1e',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingContent: {
+    textAlign: 'center',
+  },
+  loadingSpinner: {
+    width: '48px',
+    height: '48px',
+    border: '3px solid rgba(59,130,246,0.2)',
+    borderTopColor: '#3b82f6',
+    borderRadius: '50%',
+    margin: '0 auto 16px',
+    animation: 'spin 1s linear infinite',
+  },
+  loadingText: {
+    color: '#3b82f6',
+    fontFamily: 'monospace',
+    fontSize: '12px',
+    letterSpacing: '2px',
+  },
+
+  // Navigation
+  nav: {
+    position: 'relative',
+    zIndex: 10,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '16px 32px',
+    borderBottom: '1px solid rgba(59,130,246,0.2)',
+    background: 'rgba(15,23,42,0.8)',
+    backdropFilter: 'blur(12px)',
+  },
+  navLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+  },
+  navDots: {
+    display: 'flex',
+    gap: '6px',
+  },
+  navDot: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    background: '#3b82f6',
+    animation: 'pulse 1.5s ease-in-out infinite',
+  },
+  navBrand: {
+    fontFamily: 'monospace',
+    fontSize: '11px',
+    letterSpacing: '2px',
+    color: '#64748b',
+    textTransform: 'uppercase',
+  },
+  logoutBtn: {
+    padding: '8px 20px',
+    borderRadius: '12px',
+    border: '1px solid rgba(239,68,68,0.3)',
+    background: 'rgba(127,29,29,0.2)',
+    color: '#f87171',
+    fontSize: '11px',
+    fontWeight: 'bold',
+    fontFamily: 'monospace',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+
+  // Main Content
+  mainContent: {
+    position: 'relative',
+    zIndex: 10,
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '32px 24px',
+  },
+
+  // Profile Card
+  profileCard: {
+    background: 'linear-gradient(135deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.95) 100%)',
+    border: '1px solid rgba(59,130,246,0.25)',
+    borderRadius: '28px',
+    padding: '40px',
+    marginBottom: '48px',
+    position: 'relative',
+    overflow: 'hidden',
+    backdropFilter: 'blur(10px)',
+    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+  },
+  profileHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+    flexWrap: 'wrap',
+    gap: '12px',
+  },
+  authBadge: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '6px 14px',
+    background: 'rgba(59,130,246,0.1)',
+    borderRadius: '20px',
+    border: '1px solid rgba(59,130,246,0.2)',
+  },
+  authIcon: {
+    fontSize: '12px',
+  },
+  authText: {
+    fontFamily: 'monospace',
+    fontSize: '10px',
+    letterSpacing: '1px',
+    color: '#60a5fa',
+    textTransform: 'uppercase',
+  },
+  tierBadge: {
+    padding: '6px 14px',
+    background: 'linear-gradient(135deg, rgba(59,130,246,0.2), rgba(34,211,238,0.1))',
+    borderRadius: '20px',
+    fontFamily: 'monospace',
+    fontSize: '10px',
+    color: '#94a3b8',
+    letterSpacing: '1px',
+  },
+  tierValue: {
+    color: '#22d3ee',
+    fontWeight: 'bold',
+    marginLeft: '4px',
+  },
+  userName: {
+    fontSize: '42px',
+    fontWeight: '800',
+    background: 'linear-gradient(135deg, #ffffff, #93c5fd, #67e8f9)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    marginBottom: '16px',
+    letterSpacing: '-0.02em',
+  },
+  userDetails: {
+    display: 'flex',
+    gap: '24px',
+    padding: '16px 0',
+    borderTop: '1px solid rgba(59,130,246,0.15)',
+    borderBottom: '1px solid rgba(59,130,246,0.15)',
+    marginBottom: '28px',
+    flexWrap: 'wrap',
+  },
+  detailItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+  },
+  detailLabel: {
+    fontFamily: 'monospace',
+    fontSize: '10px',
+    letterSpacing: '1px',
+    color: '#64748b',
+  },
+  detailValue: {
+    fontSize: '14px',
+    color: '#cbd5e1',
+    fontWeight: '500',
+  },
+  detailValueHighlight: {
+    fontSize: '14px',
+    color: '#60a5fa',
+    fontWeight: '600',
+  },
+  detailDivider: {
+    width: '1px',
+    background: 'rgba(59,130,246,0.2)',
+  },
+  buttonGroup: {
+    display: 'flex',
+    gap: '16px',
+    flexWrap: 'wrap',
+  },
+  startBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '14px 32px',
+    background: 'linear-gradient(135deg, #2563eb, #3b82f6)',
+    border: 'none',
+    borderRadius: '16px',
+    color: '#ffffff',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    boxShadow: '0 4px 20px rgba(37,99,235,0.3)',
+  },
+  historyBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '14px 28px',
+    background: 'rgba(30,41,59,0.8)',
+    border: '1px solid rgba(59,130,246,0.3)',
+    borderRadius: '16px',
+    color: '#93c5fd',
+    fontSize: '14px',
+    fontWeight: '500',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  btnIcon: {
+    fontSize: '16px',
+  },
+  btnArrow: {
+    marginLeft: '4px',
+    transition: 'transform 0.3s ease',
+  },
+  btnSmallArrow: {
+    marginLeft: '6px',
+    transition: 'transform 0.3s ease',
+  },
+
+  // History Section
+  historySection: {
+    marginTop: '16px',
+  },
+  sectionHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    marginBottom: '28px',
+  },
+  sectionLine: {
+    flex: 1,
+    height: '1px',
+    background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent)',
+  },
+  sectionTitle: {
+    fontFamily: 'monospace',
+    fontSize: '11px',
+    letterSpacing: '2px',
+    color: '#64748b',
+    fontWeight: 'normal',
+  },
+  errorBox: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '16px',
+    background: 'rgba(239,68,68,0.1)',
+    border: '1px solid rgba(239,68,68,0.3)',
+    borderRadius: '16px',
+    color: '#fca5a5',
+    fontSize: '14px',
+  },
+  errorIcon: {
+    fontSize: '18px',
+  },
+  emptyState: {
+    textAlign: 'center',
+    padding: '64px 32px',
+    background: 'rgba(30,41,59,0.4)',
+    border: '2px dashed rgba(59,130,246,0.2)',
+    borderRadius: '24px',
+  },
+  emptyIcon: {
+    fontSize: '64px',
+    marginBottom: '16px',
+    opacity: 0.5,
+  },
+  emptyText: {
+    color: '#94a3b8',
+    fontSize: '16px',
+    marginBottom: '8px',
+  },
+  emptySubtext: {
+    color: '#64748b',
+    fontSize: '13px',
+  },
+  historyList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  },
+  historyCard: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '24px',
+    background: 'rgba(30,41,59,0.6)',
+    border: '1px solid rgba(59,130,246,0.2)',
+    borderRadius: '20px',
+    transition: 'all 0.3s ease',
+    flexWrap: 'wrap',
+    gap: '20px',
+  },
+  cardLeft: {
+    flex: 1,
+  },
+  cardDate: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    fontFamily: 'monospace',
+    fontSize: '11px',
+    color: '#64748b',
+    marginBottom: '8px',
+  },
+  calendarIcon: {
+    fontSize: '12px',
+  },
+  cardTitle: {
+    fontSize: '18px',
+    fontWeight: '700',
+    color: '#f1f5f9',
+    marginBottom: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    flexWrap: 'wrap',
+  },
+  cardLevel: {
+    fontSize: '11px',
+    fontWeight: '500',
+    padding: '3px 10px',
+    background: 'rgba(34,211,238,0.15)',
+    borderRadius: '20px',
+    color: '#22d3ee',
+  },
+  cardFeedback: {
+    fontSize: '13px',
+    color: '#94a3b8',
+    lineHeight: '1.5',
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+  },
+  cardRight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    flexShrink: 0,
+  },
+  scoreBadge: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '8px 16px',
+    background: 'rgba(59,130,246,0.15)',
+    borderRadius: '40px',
+    border: '1px solid rgba(59,130,246,0.3)',
+  },
+  scoreIcon: {
+    width: '14px',
+    height: '14px',
+    color: '#fbbf24',
+  },
+  scoreValue: {
+    fontSize: '18px',
+    fontWeight: '800',
+    color: '#60a5fa',
+  },
+  viewReportBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '10px 20px',
+    background: 'rgba(15,23,42,0.8)',
+    border: '1px solid rgba(59,130,246,0.3)',
+    borderRadius: '40px',
+    color: '#93c5fd',
+    fontSize: '12px',
+    fontWeight: '500',
+    textDecoration: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
 }
 
 export default Home
