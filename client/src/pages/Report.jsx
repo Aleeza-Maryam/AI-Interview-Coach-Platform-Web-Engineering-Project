@@ -115,6 +115,7 @@ const Report = () => {
   const [saveError, setSaveError] = useState('');
   const [saveSuccess, setSaveSuccess] = useState('');
   const [reportFetchError, setReportFetchError] = useState('');
+  const saveOnceRef = useRef(false);
 
   // ✅ useCountUp Hook yahan top level pe call ho raha hai
   // Agar reportData null hai to 0 pass kar do
@@ -248,7 +249,11 @@ const Report = () => {
       })
       setReportData(built)
       setLoading(false)
-      saveReport(built)
+      // Prevent duplicate saves in StrictMode (dev) by guarding with a ref
+      if (!saveOnceRef.current) {
+        saveOnceRef.current = true
+        saveReport(built)
+      }
     } else if (reportId) {
       loadSavedReport(reportId)
     } else {
