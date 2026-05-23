@@ -243,7 +243,7 @@ const handleOpenInterviewPage = () => {
 
             {/* Role & Level Selection */}
               <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginBottom: '18px'}}>
-                <div style={{color: '#94A3B8', fontFamily: 'monospace', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase'}}>
+                <div style={{color: 'var(--muted)', fontFamily: 'monospace', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase'}}>
                   CONFIGURE INTERVIEW SESSION
                 </div>
 
@@ -251,7 +251,7 @@ const handleOpenInterviewPage = () => {
                   <select
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value)}
-                    style={{padding: '10px 14px', borderRadius: '12px', background: '#0b1220', color: '#cbd5e1', border: '1px solid rgba(59,130,246,0.08)', minWidth: '200px'}}
+                    style={{padding: '10px 14px', borderRadius: '12px', background: 'var(--card)', color: 'var(--text)', border: '1px solid rgba(59,130,246,0.08)', minWidth: '200px'}}
                   >
                     {roles.map((r) => (
                       <option key={r} value={r}>{r}</option>
@@ -261,7 +261,7 @@ const handleOpenInterviewPage = () => {
                   <select
                     value={selectedLevel}
                     onChange={(e) => setSelectedLevel(e.target.value)}
-                    style={{padding: '10px 14px', borderRadius: '12px', background: '#0b1220', color: '#cbd5e1', border: '1px solid rgba(59,130,246,0.08)', minWidth: '140px'}}
+                    style={{padding: '10px 14px', borderRadius: '12px', background: 'var(--card)', color: 'var(--text)', border: '1px solid rgba(59,130,246,0.08)', minWidth: '140px'}}
                   >
                     {levels.map((l) => (
                       <option key={l} value={l}>{l}</option>
@@ -475,7 +475,7 @@ const styles = {
   container: {
     minHeight: '100vh',
     width: '100%',
-    background: '#070b14',
+    background: 'var(--bg)',
     fontFamily: '"Inter", system-ui, -apple-system, sans-serif',
     position: 'relative',
     overflowX: 'hidden',
@@ -533,7 +533,7 @@ const styles = {
 
   loadingContainer: {
     minHeight: '100vh',
-    background: '#070b14',
+    background: 'var(--bg)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -542,7 +542,7 @@ const styles = {
   loadingCard: {
     textAlign: 'center',
     padding: '48px',
-    background: 'rgba(15, 23, 42, 0.8)',
+    background: 'var(--card)',
     backdropFilter: 'blur(12px)',
     borderRadius: '32px',
     border: '1px solid rgba(59, 130, 246, 0.2)',
@@ -559,7 +559,7 @@ const styles = {
   },
 
   loadingText: {
-    color: '#60a5fa',
+    color: 'var(--accent)',
     fontSize: '12px',
     letterSpacing: '3px',
     fontFamily: 'monospace',
@@ -567,7 +567,7 @@ const styles = {
   },
 
   loadingSubtext: {
-    color: '#64748b',
+    color: 'var(--muted)',
     fontSize: '11px',
     letterSpacing: '1px',
   },
@@ -580,7 +580,7 @@ const styles = {
     alignItems: 'center',
     padding: '20px 40px',
     borderBottom: '1px solid rgba(59, 130, 246, 0.15)',
-    background: 'rgba(7, 11, 20, 0.9)',
+    background: 'rgba(0,0,0,0)',
     backdropFilter: 'blur(16px)',
   },
 
@@ -599,7 +599,7 @@ const styles = {
     width: '8px',
     height: '8px',
     borderRadius: '50%',
-    background: '#3b82f6',
+    background: 'var(--accent)',
     animation: 'pulse 1.5s ease-in-out infinite',
   },
 
@@ -607,7 +607,7 @@ const styles = {
     fontFamily: 'monospace',
     fontSize: '11px',
     letterSpacing: '2.5px',
-    color: '#64748b',
+    color: 'var(--muted)',
     fontWeight: '500',
   },
 
@@ -615,8 +615,8 @@ const styles = {
     padding: '8px 24px',
     borderRadius: '8px',
     border: '1px solid rgba(239, 68, 68, 0.3)',
-    background: 'rgba(127, 29, 29, 0.15)',
-    color: '#f87171',
+    background: 'rgba(127, 29, 29, 0.06)',
+    color: 'var(--accent)',
     fontSize: '11px',
     fontWeight: '600',
     fontFamily: 'monospace',
@@ -644,7 +644,7 @@ const styles = {
 
   welcomeGreeting: {
     fontSize: '14px',
-    color: '#64748b',
+    color: 'var(--muted)',
     fontFamily: 'monospace',
     letterSpacing: '1px',
     display: 'block',
@@ -662,7 +662,7 @@ const styles = {
 
   welcomeMessage: {
     fontSize: '15px',
-    color: '#94a3b8',
+    color: 'var(--muted)',
     lineHeight: '1.6',
   },
 
@@ -674,7 +674,7 @@ const styles = {
   },
 
   statCard: {
-    background: 'rgba(15, 23, 42, 0.6)',
+    background: 'var(--card)',
     border: '1px solid rgba(59, 130, 246, 0.15)',
     borderRadius: '20px',
     padding: '20px',
@@ -687,12 +687,12 @@ const styles = {
   statIcon: {
     width: '48px',
     height: '48px',
-    background: 'rgba(59, 130, 246, 0.1)',
+    background: 'rgba(59, 130, 246, 0.06)',
     borderRadius: '16px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#60a5fa',
+    color: 'var(--accent)',
   },
 
   statInfo: {
@@ -703,12 +703,12 @@ const styles = {
   statValue: {
     fontSize: '28px',
     fontWeight: '700',
-    color: '#ffffff',
+    color: 'var(--text)',
   },
 
   statLabel: {
     fontSize: '12px',
-    color: '#64748b',
+    color: 'var(--muted)',
     fontFamily: 'monospace',
     letterSpacing: '0.5px',
   },
@@ -735,11 +735,11 @@ const styles = {
     fontFamily: 'monospace',
     fontSize: '10px',
     letterSpacing: '2px',
-    color: '#475569',
+    color: 'var(--muted)',
   },
 
   profileCard: {
-    background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.95) 0%, rgba(7, 11, 20, 0.98) 100%)',
+    background: 'var(--card)',
     border: '1px solid rgba(59, 130, 246, 0.2)',
     borderRadius: '32px',
     padding: '48px',
@@ -772,7 +772,7 @@ const styles = {
   tierValue: {
     fontSize: '10px',
     fontWeight: '700',
-    color: '#22d3ee',
+    color: 'var(--accent)',
     letterSpacing: '1px',
   },
 
@@ -806,19 +806,19 @@ const styles = {
     fontSize: '10px',
     fontFamily: 'monospace',
     letterSpacing: '1px',
-    color: '#475569',
+    color: 'var(--muted)',
   },
 
   metaValue: {
     fontSize: '14px',
     fontWeight: '500',
-    color: '#94a3b8',
+    color: 'var(--muted)',
   },
 
   metaValueHighlight: {
     fontSize: '14px',
     fontWeight: '600',
-    color: '#60a5fa',
+    color: 'var(--accent)',
   },
 
   metaDivider: {
@@ -865,10 +865,10 @@ const styles = {
 
   secondaryButton: {
     padding: '14px 28px',
-    background: 'rgba(15, 23, 42, 0.8)',
-    border: '1px solid rgba(59, 130, 246, 0.3)',
+    background: 'var(--card)',
+    border: '1px solid rgba(59, 130, 246, 0.08)',
     borderRadius: '14px',
-    color: '#93c5fd',
+    color: 'var(--accent)',
     fontSize: '13px',
     fontWeight: '500',
     letterSpacing: '0.5px',
@@ -897,13 +897,13 @@ const styles = {
     alignItems: 'center',
     gap: '10px',
     padding: '8px 20px',
-    background: 'rgba(59, 130, 246, 0.05)',
+    background: 'rgba(59, 130, 246, 0.03)',
     borderRadius: '40px',
-    border: '1px solid rgba(59, 130, 246, 0.15)',
+    border: '1px solid rgba(59, 130, 246, 0.08)',
   },
 
   headerIcon: {
-    color: '#3b82f6',
+    color: 'var(--accent)',
     display: 'flex',
     alignItems: 'center',
   },
@@ -912,7 +912,7 @@ const styles = {
     fontFamily: 'monospace',
     fontSize: '11px',
     letterSpacing: '2px',
-    color: '#64748b',
+    color: 'var(--muted)',
     fontWeight: '500',
   },
 
@@ -940,18 +940,18 @@ const styles = {
   emptyContainer: {
     textAlign: 'center',
     padding: '80px 40px',
-    background: 'rgba(15, 23, 42, 0.4)',
+    background: 'var(--card)',
     border: '2px dashed rgba(59, 130, 246, 0.15)',
     borderRadius: '28px',
   },
 
   emptyIcon: {
-    color: '#334155',
+    color: 'var(--muted)',
     marginBottom: '20px',
   },
 
   emptyTitle: {
-    color: '#475569',
+    color: 'var(--muted)',
     fontSize: '13px',
     letterSpacing: '2px',
     fontFamily: 'monospace',
@@ -959,7 +959,7 @@ const styles = {
   },
 
   emptyDescription: {
-    color: '#64748b',
+    color: 'var(--muted)',
     fontSize: '13px',
     maxWidth: '400px',
     margin: '0 auto 24px',
@@ -984,8 +984,8 @@ const styles = {
   },
 
   historyCard: {
-    background: 'rgba(15, 23, 42, 0.7)',
-    border: '1px solid rgba(59, 130, 246, 0.15)',
+    background: 'var(--card)',
+    border: '1px solid rgba(59, 130, 246, 0.08)',
     borderRadius: '20px',
     padding: '24px',
     transition: 'all 0.3s ease',

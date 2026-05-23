@@ -265,10 +265,10 @@ const Report = () => {
   // ✅ Ab conditional returns HOOKS ke BAAD aayenge (yeh sahi hai)
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0b172a] text-white flex items-center justify-center px-4 py-8">
+      <div className="min-h-screen use-app-bg text-app flex items-center justify-center px-4 py-8">
         <div className="text-center space-y-3">
           <div className="mx-auto h-14 w-14 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
-          <p className="text-sm text-slate-300">Loading report details...</p>
+          <p className="text-sm text-muted">Loading report details...</p>
         </div>
       </div>
     )
@@ -276,12 +276,12 @@ const Report = () => {
 
   if (reportFetchError) {
     return (
-      <div className="min-h-screen bg-[#0b172a] text-white flex flex-col items-center justify-center px-4 py-8 gap-6">
+      <div className="min-h-screen use-app-bg text-app flex flex-col items-center justify-center px-4 py-8 gap-6">
         <div className="max-w-md text-center">
           <p className="text-red-300 font-semibold">{reportFetchError}</p>
-          <p className="text-slate-400 mt-3">Please try again or return to the dashboard.</p>
+          <p className="text-muted mt-3">Please try again or return to the dashboard.</p>
         </div>
-        <button onClick={() => navigate('/')} className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold">
+        <button onClick={() => navigate('/')} className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-app font-semibold">
           Back to Dashboard
         </button>
       </div>
@@ -290,10 +290,10 @@ const Report = () => {
 
   if (!reportData) {
     return (
-      <div className="min-h-screen bg-[#0b172a] text-white flex items-center justify-center px-4 py-8">
+      <div className="min-h-screen use-app-bg text-app flex items-center justify-center px-4 py-8">
         <div className="text-center">
-          <p className="text-slate-300">No report data available. Please complete an interview or select a saved report.</p>
-          <button onClick={() => navigate('/')} className="mt-6 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold">
+          <p className="text-muted">No report data available. Please complete an interview or select a saved report.</p>
+          <button onClick={() => navigate('/')} className="mt-6 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-app font-semibold">
             Back to Dashboard
           </button>
         </div>
@@ -310,18 +310,18 @@ const Report = () => {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-          --bg:        #060c18;
-          --surface:   #0a1325;
-          --surface2:  #0f1e38;
-          --border:    rgba(56,100,180,0.18);
-          --border-hi: rgba(56,120,220,0.35);
-          --blue:      #3b7af6;
-          --blue-dim:  #1d4ed8;
-          --cyan:      #22d3ee;
-          --indigo:    #818cf8;
-          --text:      #e2eaf8;
-          --text-dim:  #6b84a8;
-          --text-mute: #3a5070;
+          --bg:        var(--bg);
+          --surface:   var(--card);
+          --surface2:  var(--card);
+          --border:    rgba(59,130,246,0.08);
+          --border-hi: rgba(59,130,246,0.12);
+          --blue:      var(--accent);
+          --blue-dim:  var(--accent);
+          --cyan:      var(--accent);
+          --indigo:    var(--accent);
+          --text:      var(--text);
+          --text-dim:  var(--muted);
+          --text-mute: var(--muted);
           --mono:      'DM Mono', monospace;
           --sans:      'Syne', sans-serif;
           --serif:     'Instrument Serif', serif;
@@ -449,7 +449,7 @@ const Report = () => {
         .hero-title {
           font-size: clamp(26px, 4vw, 36px);
           font-weight: 800;
-          color: #f0f6ff;
+          color: var(--text);
           letter-spacing: -0.02em;
           line-height: 1.1;
           margin-bottom: 6px;

@@ -94,14 +94,37 @@ function InterviewSession() {
     }
 
     rec.onend = () => {
-      setListeningTarget(null)
-      setRecognition(null)
+      console.debug('SpeechRecognition ended')
+      // Try to auto-restart if we intend to keep listening (handles short browser timeouts)
+      if (listeningTarget === target) {
+        setTimeout(() => {
+          try {
+            rec.start()
+            console.debug('SpeechRecognition restarted')
+          } catch (e) {
+            console.error('Could not restart recognition', e)
+            setListeningTarget(null)
+            setRecognition(null)
+          }
+        }, 250)
+      } else {
+        setListeningTarget(null)
+        setRecognition(null)
+      }
     }
 
     rec.onerror = (e) => {
       console.error('Speech recognition error', e.error || e)
-      setListeningTarget(null)
-      setRecognition(null)
+      // Some transient errors (no-speech, network) can be recovered by restarting
+      const recoverable = ['no-speech', 'network', 'aborted', 'audio-capture'].includes(e.error)
+      if (recoverable && listeningTarget === target) {
+        setTimeout(() => {
+          try { rec.start(); console.debug('SpeechRecognition restarted after error') } catch (err) { console.error('Restart after error failed', err); setListeningTarget(null); setRecognition(null) }
+        }, 300)
+      } else {
+        setListeningTarget(null)
+        setRecognition(null)
+      }
     }
 
     setRecognition(rec)
@@ -149,8 +172,12 @@ function InterviewSession() {
     }
 
     rec.onend = () => {
+      console.debug('Main SpeechRecognition ended')
       if (listening) {
-        try { rec.start() } catch (e) { console.error('Could not restart recognition', e); setListening(false) }
+        // small delay before restarting to avoid rapid loops
+        setTimeout(() => {
+          try { rec.start(); console.debug('Main SpeechRecognition restarted') } catch (e) { console.error('Could not restart recognition', e); setListening(false) }
+        }, 250)
       } else {
         setListening(false)
       }
@@ -240,7 +267,7 @@ function InterviewSession() {
   // If role/level not provided
   if (!role || !level) {
     return (
-      <div className="min-h-screen bg-[#0b0f19] text-white flex items-center justify-center">
+      <div className="min-h-screen use-app-bg text-app flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-400 mb-4">No interview configuration found.</p>
           <a href="/" className="text-blue-400 hover:underline">Go back to home</a>
@@ -252,32 +279,32 @@ function InterviewSession() {
   // Configuration Screen
   if (questions.length === 0 && !generating) {
     return (
-      <div className="min-h-screen bg-[#0b0f19] text-white px-4 py-8">
+      <div className="min-h-screen use-app-bg text-app px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">
               Interview Configuration
             </h1>
-            <p className="text-gray-400">Customize your interview experience</p>
+            <p className="text-muted">Customize your interview experience</p>
           </div>
 
           {/* Role & Level */}
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 mb-6">
+          <div className="use-card-bg border border-accent rounded-2xl p-6 mb-6">
             <h2 className="text-sm font-mono text-blue-400 mb-4">CONFIRMED DETAILS</h2>
             <div className="flex gap-6">
-              <div className="flex-1 bg-slate-800 rounded-xl p-4 text-center">
-                <p className="text-xs text-gray-400 mb-1">Job Role</p>
+              <div className="flex-1 use-card-bg rounded-xl p-4 text-center">
+                <p className="text-xs text-muted mb-1">Job Role</p>
                 <p className="text-lg font-bold text-blue-400">{role}</p>
               </div>
-              <div className="flex-1 bg-slate-800 rounded-xl p-4 text-center">
-                <p className="text-xs text-gray-400 mb-1">Experience Level</p>
+              <div className="flex-1 use-card-bg rounded-xl p-4 text-center">
+                <p className="text-xs text-muted mb-1">Experience Level</p>
                 <p className="text-lg font-bold text-green-400">{level}</p>
               </div>
             </div>
           </div>
 
           {/* Number of Questions */}
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 mb-6">
+          <div className="use-card-bg border border-accent rounded-2xl p-6 mb-6">
             <label className="block text-sm font-mono text-blue-400 mb-3">NUMBER OF QUESTIONS</label>
             <div className="grid grid-cols-3 gap-3">
               {[5, 10, 15].map((num) => (
@@ -286,8 +313,8 @@ function InterviewSession() {
                   onClick={() => setNumQuestions(num)}
                   className={`py-3 rounded-xl font-semibold transition-all duration-200 ${
                     numQuestions === num
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                      : 'bg-slate-800 text-gray-400 hover:bg-slate-700'
+                      ? 'bg-blue-600 text-app shadow-lg shadow-blue-600/30'
+                      : 'use-card-bg text-muted hover:opacity-90'
                   }`}
                 >
                   {num} Questions
@@ -297,7 +324,7 @@ function InterviewSession() {
           </div>
 
           {/* Question Type */}
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 mb-8">
+          <div className="use-card-bg border border-accent rounded-2xl p-6 mb-8">
             <label className="block text-sm font-mono text-blue-400 mb-3">QUESTION TYPE</label>
             <div className="grid grid-cols-3 gap-3">
               {[
@@ -310,8 +337,8 @@ function InterviewSession() {
                   onClick={() => setQuestionType(type.value)}
                   className={`py-3 px-2 rounded-xl font-semibold transition-all duration-200 ${
                     questionType === type.value
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                      : 'bg-slate-800 text-gray-400 hover:bg-slate-700'
+                      ? 'bg-blue-600 text-app shadow-lg shadow-blue-600/30'
+                      : 'use-card-bg text-muted hover:opacity-90'
                   }`}
                 >
                   <div className="text-sm">{type.label}</div>
@@ -324,7 +351,7 @@ function InterviewSession() {
           <button
             onClick={handleGenerateQuestions}
             className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500
-            text-white font-bold py-4 rounded-xl transition-all duration-200 text-lg"
+            text-app font-bold py-4 rounded-xl transition-all duration-200 text-lg"
           >
             Generate Questions
           </button>
@@ -342,7 +369,7 @@ function InterviewSession() {
   // Loading Screen
   if (generating) {
     return (
-      <div className="min-h-screen bg-[#0b0f19] text-white flex items-center justify-center">
+      <div className="min-h-screen use-app-bg text-app flex items-center justify-center">
         <div className="text-center">
           <div className="relative w-16 h-16 mx-auto mb-4">
             <div className="absolute inset-0 border-4 border-blue-500/30 rounded-full"></div>
@@ -359,7 +386,7 @@ function InterviewSession() {
 
   // Interview Session Screen
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-white px-4 py-8">
+    <div className="min-h-screen use-app-bg text-app px-4 py-8">
       <div className="max-w-2xl mx-auto">
 
         {/* Header */}
@@ -377,7 +404,7 @@ function InterviewSession() {
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-gray-700 rounded-full h-2 mb-8">
+        <div className="w-full rounded-full h-2 mb-8 use-card-bg" style={{ backgroundColor: 'rgba(100,116,139,0.14)' }}>
           <div
             className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full transition-all duration-500"
             style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
@@ -385,7 +412,7 @@ function InterviewSession() {
         </div>
 
         {/* Question Card */}
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-2xl p-6 mb-6">
+        <div className="use-card-bg border border-accent rounded-2xl p-6 mb-6">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xs text-blue-400 font-mono bg-blue-500/10 px-2 py-1 rounded">
               QUESTION {currentIndex + 1}
@@ -405,12 +432,12 @@ function InterviewSession() {
                 onChange={(e) => setAnswer(e.target.value)}
                 placeholder="Type your answer here..."
                 rows={6}
-                className="w-full bg-slate-900 border border-slate-700 text-white
+                className="w-full use-card-bg border border-accent text-app
                 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none"
               />
               <button
                 onClick={handleMainMic}
-                className={`absolute right-3 bottom-3 w-9 h-9 rounded-full flex items-center justify-center text-white shadow-lg transition-all ${
+                className={`absolute right-3 bottom-3 w-9 h-9 rounded-full flex items-center justify-center text-app shadow-lg transition-all ${
                   listening ? 'bg-red-600' : 'bg-blue-600 hover:bg-blue-500'
                 }`}
                 title={listening ? 'Stop recording' : 'Start voice input'}
@@ -435,8 +462,8 @@ function InterviewSession() {
             <button
               onClick={handleSubmitAnswer}
               disabled={evaluating}
-              className="mt-3 w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700
-              text-white font-bold py-3 rounded-xl transition-all duration-200"
+              className="mt-3 w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-60
+              text-app font-bold py-3 rounded-xl transition-all duration-200"
             >
               {evaluating ? (
                 <span className="flex items-center justify-center gap-2">
@@ -450,7 +477,7 @@ function InterviewSession() {
 
         {/* Evaluation Feedback */}
         {evaluation && (
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 mb-6">
+          <div className="use-card-bg border border-accent rounded-2xl p-6 mb-6">
             <h3 className="text-lg font-bold text-blue-400 mb-4">AI Feedback</h3>
 
             <div className="grid grid-cols-2 gap-3 mb-4">
@@ -460,8 +487,8 @@ function InterviewSession() {
                 { label: 'Relevance', value: evaluation.relevance },
                 { label: 'Overall', value: evaluation.overall },
               ].map((item) => (
-                <div key={item.label} className="bg-slate-800 rounded-xl p-3 text-center">
-                  <p className="text-gray-400 text-xs mb-1">{item.label}</p>
+                <div key={item.label} className="use-card-bg rounded-xl p-3 text-center">
+                  <p className="text-muted text-xs mb-1">{item.label}</p>
                   <p className={`text-2xl font-bold ${
                     item.value >= 7 ? 'text-green-400' :
                     item.value >= 5 ? 'text-yellow-400' : 'text-red-400'
@@ -473,9 +500,9 @@ function InterviewSession() {
             </div>
 
             <div className="space-y-3">
-              <div className="bg-slate-800 rounded-xl p-3">
-                <p className="text-xs text-gray-400 mb-1">Feedback</p>
-                <p className="text-sm text-gray-200">{evaluation.feedback}</p>
+              <div className="use-card-bg rounded-xl p-3">
+                <p className="text-xs text-muted mb-1">Feedback</p>
+                <p className="text-sm text-muted">{evaluation.feedback}</p>
               </div>
               <div className="bg-green-950/50 border border-green-800 rounded-xl p-3">
                 <p className="text-xs text-green-400 mb-1">Strength</p>
@@ -498,12 +525,12 @@ function InterviewSession() {
                     onChange={(e) => setFollowUpAnswer(e.target.value)}
                     placeholder="Answer the follow-up..."
                     rows={3}
-                    className="w-full bg-slate-900 text-white rounded-lg px-3 py-2
+                    className="w-full bg-slate-900 text-app rounded-lg px-3 py-2
                     focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none text-sm"
                   />
                   <button
                     onClick={() => toggleSpeechInput('followUp', setFollowUpAnswer)}
-                    className={`absolute right-2 bottom-2 w-8 h-8 rounded-full flex items-center justify-center text-white ${
+                    className={`absolute right-2 bottom-2 w-8 h-8 rounded-full flex items-center justify-center text-app ${
                       listeningTarget === 'followUp' ? 'bg-red-600' : 'bg-yellow-600 hover:bg-yellow-500'
                     }`}
                   >
@@ -524,7 +551,7 @@ function InterviewSession() {
             <button
               onClick={handleNext}
               className="mt-4 w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500
-              text-white font-bold py-3 rounded-xl transition-all duration-200"
+              text-app font-bold py-3 rounded-xl transition-all duration-200"
             >
               {currentIndex + 1 >= questions.length ? 'View Final Report' : 'Next Question'}
             </button>

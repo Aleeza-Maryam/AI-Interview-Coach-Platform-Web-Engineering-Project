@@ -51,10 +51,10 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex bg-[#0f172a] text-white font-sans overflow-hidden">
+    <div className="min-h-screen w-screen flex use-app-bg text-app font-sans overflow-hidden">
       
       {/* LEFT SIDE: Split Aesthetic Screen (Uses 1.jfif) */}
-      <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-slate-900">
+      <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center use-card-bg">
         <img 
           src="/1.jfif" 
           alt="Login Workspace Visual" 
@@ -62,10 +62,10 @@ const Login = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950/90 via-transparent to-blue-950/70"></div>
         <div className="relative z-10 p-12 max-w-lg">
-          <h2 className="text-4xl font-black tracking-tight text-white leading-tight">
+          <h2 className="text-4xl font-black tracking-tight text-app leading-tight">
             Resume Your AI <br/>Training <span className="text-cyan-400">Sessions</span>
           </h2>
-          <p className="mt-4 text-slate-400 text-sm leading-relaxed">
+          <p className="mt-4 text-muted text-sm leading-relaxed">
             Log back into your core environment variables to retrieve prior interview logs, metric score boards, and system evaluations.
           </p>
         </div>
@@ -78,7 +78,7 @@ const Login = () => {
             <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
               System Access
             </h2>
-            <p className="text-slate-400 text-sm mt-1">Authenticate identity nodes to initialize user dashboard</p>
+            <p className="text-muted text-sm mt-1">Authenticate identity nodes to initialize user dashboard</p>
           </div>
 
           {error && (
@@ -89,21 +89,21 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">Email Port</label>
-              <input type="email" name="email" required value={formData.email} onChange={handleChange} placeholder="you@example.com" className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500 transition-all"/>
+              <label className="block text-[10px] font-mono uppercase tracking-wider text-muted mb-1.5">Email Port</label>
+              <input type="email" name="email" required value={formData.email} onChange={handleChange} placeholder="you@example.com" className="w-full px-4 py-3 rounded-xl use-card-bg border border-accent text-sm text-app focus:outline-none focus:border-blue-500 transition-all"/>
             </div>
 
             <div>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">Access Password</label>
-              <input type="password" name="password" required value={formData.password} onChange={handleChange} placeholder="••••••••" className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white focus:outline-none focus:border-blue-500 transition-all"/>
+              <label className="block text-[10px] font-mono uppercase tracking-wider text-muted mb-1.5">Access Password</label>
+              <input type="password" name="password" required value={formData.password} onChange={handleChange} placeholder="••••••••" className="w-full px-4 py-3 rounded-xl use-card-bg border border-accent text-sm text-app focus:outline-none focus:border-blue-500 transition-all"/>
             </div>
 
-            <button type="submit" disabled={loading} className="w-full py-3 mt-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold text-sm tracking-wide hover:from-blue-500 hover:to-blue-400 transition-all disabled:opacity-50 shadow-lg shadow-blue-500/10">
+            <button type="submit" disabled={loading} className="w-full py-3 mt-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 text-app font-bold text-sm tracking-wide hover:from-blue-500 hover:to-blue-400 transition-all disabled:opacity-50 shadow-lg shadow-blue-500/10">
               {loading ? 'Verifying Tokens...' : 'Sign In 🔑'}
             </button>
           </form>
 
-          <p className="text-center text-xs text-slate-400">
+          <p className="text-center text-xs text-muted">
             New node cluster requirement?{' '}
             <Link to="/signup" className="text-blue-400 hover:underline font-semibold">Setup Profile</Link>
           </p>

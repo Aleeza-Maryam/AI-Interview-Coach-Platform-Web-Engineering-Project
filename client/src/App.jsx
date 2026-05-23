@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Home from './pages/Home'
@@ -15,6 +15,15 @@ function App() {
   // AGAR user pehle se logged in hai, tou splash screen nahi dikhani (false), warna true
   const [showSplash, setShowSplash] = useState(!isAuthenticated)
 
+  // Theme (light/dark) persisted in localStorage; default to dark
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
+
+  useEffect(() => {
+    if (theme === 'light') document.documentElement.classList.add('light')
+    else document.documentElement.classList.remove('light')
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
   // Sabse pehle splash screen tabhi dikhegi agar user logged in nahi hai
   if (showSplash) {
     return <SplashScreen onFinished={() => setShowSplash(false)} />
@@ -22,15 +31,32 @@ function App() {
 
   return (
     <BrowserRouter>
+      <button
+        onClick={() => setTheme((t) => (t === 'light' ? 'dark' : 'light'))}
+        title="Toggle theme"
+        style={{
+          position: 'fixed',
+          left: 16,
+          top: 70,
+          zIndex: 60,
+          padding: '8px 10px',
+          borderRadius: 8,
+          background: 'var(--card)',
+          color: 'var(--text)',
+          border: '1px solid rgba(255,255,255,0.06)'
+        }}
+      >
+        {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
+      </button>
       {/* Dark modern theme toasters globally integrated */}
       <Toaster 
         position="top-center" 
         reverseOrder={false}
         toastOptions={{
           style: {
-            background: '#1e293b',
-            color: '#fff',
-            border: '1px solid #334155',
+            background: 'var(--card)',
+            color: 'var(--text)',
+            border: '1px solid rgba(59,130,246,0.08)',
             fontFamily: 'monospace',
             fontSize: '13px'
           },

@@ -72,3 +72,38 @@
 .animation-delay-4000 {
   animation-delay: 4000ms;
 }
+
+:root{
+  --bg: #0b0f19;
+  --card: #0b1726;
+  --muted: #94a3b8;
+  --text: #ffffff;
+  --accent: #3b82f6;
+}
+
+.light{
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --muted: #475569;
+  --text: #0b1220;
+  --accent: #2563eb;
+}
+
+body{
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 250ms ease, color 250ms ease;
+}
+
+/* Utility to apply card background using CSS var for components using classes */
+.card-bg{ background-color: var(--card); }
+
+.text-muted{ color: var(--muted); }
+
+.accent{ color: var(--accent); }
+
+/* Theme-aware utility classes */
+.use-app-bg{ background: var(--bg) !important }
+.use-card-bg{ background: var(--card) !important }
+.text-app{ color: var(--text) !important }
+.border-accent{ border-color: rgba(59,130,246,0.12) !important }
