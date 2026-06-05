@@ -24,7 +24,7 @@ function App() {
     localStorage.setItem('theme', theme)
   }, [theme])
 
-  // Sabse pehle splash screen tabhi dikhegi agar user logged in nahi hai
+  
   if (showSplash) {
     return <SplashScreen onFinished={() => setShowSplash(false)} />
   }
