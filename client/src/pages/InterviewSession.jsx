@@ -462,7 +462,7 @@ function InterviewSession() {
             <button
               onClick={handleSubmitAnswer}
               disabled={evaluating}
-              className="mt-3 w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-60
+              className="mt-3 w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700
               text-app font-bold py-3 rounded-xl transition-all duration-200"
             >
               {evaluating ? (
@@ -477,7 +477,7 @@ function InterviewSession() {
 
         {/* Evaluation Feedback */}
         {evaluation && (
-          <div className="use-card-bg border border-accent rounded-2xl p-6 mb-6">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 mb-6">
             <h3 className="text-lg font-bold text-blue-400 mb-4">AI Feedback</h3>
 
             <div className="grid grid-cols-2 gap-3 mb-4">
@@ -487,8 +487,8 @@ function InterviewSession() {
                 { label: 'Relevance', value: evaluation.relevance },
                 { label: 'Overall', value: evaluation.overall },
               ].map((item) => (
-                <div key={item.label} className="use-card-bg rounded-xl p-3 text-center">
-                  <p className="text-muted text-xs mb-1">{item.label}</p>
+                <div key={item.label} className="bg-slate-800 rounded-xl p-3 text-center">
+                  <p className="text-gray-400 text-xs mb-1">{item.label}</p>
                   <p className={`text-2xl font-bold ${
                     item.value >= 7 ? 'text-green-400' :
                     item.value >= 5 ? 'text-yellow-400' : 'text-red-400'
@@ -500,9 +500,9 @@ function InterviewSession() {
             </div>
 
             <div className="space-y-3">
-              <div className="use-card-bg rounded-xl p-3">
-                <p className="text-xs text-muted mb-1">Feedback</p>
-                <p className="text-sm text-muted">{evaluation.feedback}</p>
+              <div className="bg-slate-800 rounded-xl p-3">
+                <p className="text-xs text-gray-400 mb-1">Feedback</p>
+                <p className="text-sm text-gray-200">{evaluation.feedback}</p>
               </div>
               <div className="bg-green-950/50 border border-green-800 rounded-xl p-3">
                 <p className="text-xs text-green-400 mb-1">Strength</p>

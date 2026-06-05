@@ -33,10 +33,7 @@ const SplashScreen = ({ onFinished }) => {
 
       {/* Content Card */}
       <div className="relative z-30 text-center max-w-md w-[90%] px-8 py-14 rounded-2xl use-card-bg backdrop-blur-md border border-accent/40 shadow-[0_0_50px_rgba(59,130,246,0.15)] transition-all duration-500">
-        <span className="inline-block px-3 py-1 text-[10px] font-mono tracking-widest text-blue-400 uppercase bg-blue-950/50 border border-blue-500/30 rounded-md shadow-[0_0_15px_rgba(59,130,246,0.1)]">
-          // SYSTEM INITIALIZED
-        </span>
-
+     
         <h1 className="mt-6 text-4xl font-black tracking-tight text-app uppercase sm:text-5xl">
           INTERVIEW{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 drop-shadow-[0_0_15px_rgba(56,189,248,0.3)]">
