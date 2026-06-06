@@ -2,7 +2,7 @@ import axios from "axios"
 
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
 
-// Questions Generate karna
+
 export const generateQuestions = async (req, res) => {
   const { role, level, jobProfile, difficulty, numQuestions = 10, questionType = "Both" } = req.body
 
@@ -34,7 +34,6 @@ CRITICAL REQUIREMENTS:
 2. No extra text, no markdown, no backticks, no explanations
 3. Each question should be relevant to ${actualRole} 
 4. Difficulty level: ${actualLevel}
-
 Return format (exactly):
 ["Question 1?", "Question 2?", "Question 3?", ..., "Question ${questionCount}?"]`
 
@@ -76,7 +75,6 @@ Return format (exactly):
   }
 }
 
-// Answer Evaluate karna
 export const evaluateAnswer = async (req, res) => {
   const { question, answer, role, level, jobProfile, difficulty } = req.body
 
