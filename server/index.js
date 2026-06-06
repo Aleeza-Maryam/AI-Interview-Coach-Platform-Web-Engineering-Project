@@ -14,7 +14,7 @@ app.use(express.json())
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/interview-coach')
-  .then(() => console.log('MongoDB connected ✅'))
+  .then(() => console.log('MongoDB connected '))
   .catch(err => console.error('MongoDB connection failed:', err))
 
 app.use('/api/auth', authRoutes)
