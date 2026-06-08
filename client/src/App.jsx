@@ -9,7 +9,6 @@ import Signup from './pages/Signup'
 import SplashScreen from './components/SplashScreen'
 import InterviewSession from './pages/InterviewSession'
 function App() {
-  // Check karenge ke kya user already logged in hai
   const isAuthenticated = !!localStorage.getItem('token')
 
   // AGAR user pehle se logged in hai, tou splash screen nahi dikhani (false), warna true
