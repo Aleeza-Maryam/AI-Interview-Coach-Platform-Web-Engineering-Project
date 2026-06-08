@@ -11,7 +11,7 @@ import InterviewSession from './pages/InterviewSession'
 function App() {
   const isAuthenticated = !!localStorage.getItem('token')
 
-  // AGAR user pehle se logged in hai, tou splash screen nahi dikhani (false), warna true
+ 
   const [showSplash, setShowSplash] = useState(!isAuthenticated)
 
   // Theme (light/dark) persisted in localStorage; default to dark
